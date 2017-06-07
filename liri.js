@@ -1,11 +1,15 @@
 var fs = require('fs');
-var argOne = process.argv[2];
-var argTwo = process.argv[3];
-var request = require('request');
 
-// twitter
+var userInput = process.argv[2];
+var argTwo = process.argv[3];
+
+var request = require('request');
 var keys = require('./keys.js');
 var Twitter = require('twitter');
+var spotify = require('spotify');
+
+
+// Twitter
 var client = new Twitter({
     consumer_key: keys.twitterKeys.consumer_key,
     consumer_secret: keys.twitterKeys.consumer_secret,
@@ -14,10 +18,23 @@ var client = new Twitter({
 });
 var params = { count: 20 };
 
-// spotify
-var spotify = require('spotify');
+switch (userInput) {
+    case "my-tweets":
+        pullTweet();
+        break;
+    case "spotify-this-song":
+        pullSong();
+        break;
+    case "movie-this":
+        pullMovie();
+        break;
+    case "random-this":
+        pullRandom();
+        break;
+};
 
-function getTweets() {
+// Spotify
+function pullTweet() {
     client.get('statuses/user_timeline', params, function(error, tweets, response) {
         if (!error) {
             for (var i = 0; i < tweets.length; i++) {
@@ -31,7 +48,7 @@ function getTweets() {
     });
 }
 
-function getSong() {
+function pullSong() {
     var queryInput = "never gonna give you up";
     if (argTwo !== undefined) {
         queryInput = argTwo;
@@ -43,13 +60,13 @@ function getSong() {
         };
         console.log("Artist: " + data.tracks.items[0].artists[0].name);
         console.log("Song Name: " + data.tracks.items[0].name);
-        console.log("Spotify Preview Link: " + data.tracks.items[0].external_urls.spotify);
+        console.log("Spotify Preview: " + data.tracks.items[0].external_urls.spotify);
         console.log("Album: " + data.tracks.items[0].album.name);
         fs.appendFile('log.txt', "Artist: " + data.tracks.items[0].artists[0].name + "\n" + "Song Name: " + data.tracks.items[0].name + "\n" + "Spotify Preview Link: " + data.tracks.items[0].external_urls.spotify + "\n" + "Album: " + data.tracks.items[0].album.name + "\n" + "=================================================================");
     });
 };
 
-function getMovie() {
+function pullMovie() {
     var queryInput = "Avatar";
     if (argTwo !== undefined) {
         queryInput = argTwo;
@@ -74,21 +91,21 @@ function getMovie() {
 };
 
 
-function getRandom() {
+function pullRandom() {
     fs.readFile("random.txt", "utf8", function(error, data) {
         // If an error was experienced we say it.
         if (error) {
             console.log(error);
         } else {
             var dataArray = data.split(',');
-            var argOne = dataArray[0];
+            var userInput = dataArray[0];
             var argTwo = dataArray[1];
-            switch (argOne) {
+            switch (userInput) {
                 case "my-tweets":
-                    getTweets();
+                    pullTweet();
                     break;
                 case "spotify-this-song":
-                    function getSong() {
+                    function pullSong() {
                         var queryInput = "never gonna give you up";
                         if (argTwo !== undefined) {
                             queryInput = argTwo;
@@ -105,10 +122,10 @@ function getRandom() {
                             fs.appendFile('log.txt', "Artist: " + data.tracks.items[0].artists[0].name + "\n" + "Song Name: " + data.tracks.items[0].name + "\n" + "Spotify Preview Link: " + data.tracks.items[0].external_urls.spotify + "\n" + "Album: " + data.tracks.items[0].album.name + "\n" + "=================================================================");
                         });
                     }
-                    getSong();
+                    pullSong();
                     break;
                 case "movie-this":
-                    function getMovie() {
+                    function pullMovie() {
                         var queryInput = "Avatar";
                         if (argTwo !== undefined) {
                             queryInput = argTwo;
@@ -131,24 +148,9 @@ function getRandom() {
                             }
                         });
                     }
-                    getMovie();
+                    pullMovie();
                     break;
             };
         };
     });
-};
-
-switch (argOne) {
-    case "my-tweets":
-        getTweets();
-        break;
-    case "spotify-this-song":
-        getSong();
-        break;
-    case "movie-this":
-        getMovie();
-        break;
-    case "do-what-it-says":
-        getRandom();
-        break;
 };

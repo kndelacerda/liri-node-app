@@ -1,4 +1,4 @@
-console.log('this is loaded');
+console.log('The Twitter keys are loaded.');
 
 exports.twitterKeys = {
     consumer_key: 'RM9L0Ia6BvkQ4ZXma6oGGHrsV',
@@ -6,5 +6,3 @@ exports.twitterKeys = {
     access_token_key: '863898071788343296-JGAHztgfHrf7lMIZw4NlgsxytDNCU77',
     access_token_secret: 'UkIkAlImpl8gYR4Wc7oCb7X56h4HevkGd7aj3NjQj0RbW'
 };
-
-// Replace the keys with a space once finalized on Github! 
